@@ -63,23 +63,23 @@ class Probo:
 
         """
             Stores the feature matrix for JVM flags
-            Each row represents a specific test run
+            Each row represents an evaluated flag combination
             Each column represents a specific JVM flag (1 if used, 0 if not)
             This is essentially a one-hot encoded representation of flag combinations
             example:
-               has_-XX:+UseParallelGC  has_-XX:+UseG1GC  has_-XX:+AggressiveOpts  has_-XX:+DoEscapeAnalysis
-            0                     1                  0                       0                           1
-            1                     0                  1                       1                           0
-            2                     1                  0                       1                           1
-            3                     0                  0                       0                           1
-            4                     0                  1                       0                           0
+               has_-XX:+UseParallelGC  has_-XX:+UseSerialGC  has_-XX:+AggressiveHeap  has_-XX:-DoEscapeAnalysis
+            0                     1                      0                        0                          1
+            1                     0                      1                        0                          0
+            2                     1                      0                        1                          1
+            3                     0                      0                        0                          1
+            4                     0                      0                        1                          0
         """
 
         self.X_flags = None
         """
             Stores the matrix of JVM metrics
-            Each row corresponds to a test run
-            Each column represents a different metric (e.g., "GC count", "User CPU % mean")
+            Each row corresponds to an evaluated flag combination
+            Each column represents a different metric (e.g., "Total GC Count", "Mean User CPU %")
             These are the actual measurements collected from JFR files
             example of self.X_metrics[metric]:
             0    15.3
@@ -91,7 +91,7 @@ class Probo:
         self.X_metrics = None
         """
             Stores the target variable
-            Contains the normalized runtime for each test suite run
+            Contains the average test-suite runtime of each combination, in seconds
             This is what the system ultimately tries to minimize
         """
         self.y_runtime = None
