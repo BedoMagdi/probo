@@ -1,0 +1,5 @@
+results-java/
+results-best-flags/
+__pycache__/
+jfr_parser/parser/target/
+.DS_Store
