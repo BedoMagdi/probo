@@ -310,11 +310,16 @@ def create_table_all(file_dir, info_sorted, file_name="all_combinations_table.tx
         f.write(tabulate(data, headers=col_names, tablefmt="github"))
 
 def check_argLine_options(project_path, options):
-    """Check whether an argLine in the project's pom.xml contains any of the given options."""
-    pom_file = os.path.join(project_path, 'pom.xml')
+    """Check whether an argLine in the project's pom.xml, or in a pom.xml of a directory above it
+    up to the root of its git repository, contains any of the given options."""
     pre = '{http://maven.apache.org/POM/4.0.0}'
-    root = ET.parse(pom_file).getroot()
-    for argLine in root.iter(pre + 'argLine'):
-        if argLine.text is not None and any(option in argLine.text for option in options):
-            return True
-    return False
+    path = os.path.realpath(project_path)
+    while True:
+        pom_file = os.path.join(path, 'pom.xml')
+        if os.path.exists(pom_file):
+            for argLine in ET.parse(pom_file).getroot().iter(pre + 'argLine'):
+                if argLine.text is not None and any(option in argLine.text for option in options):
+                    return True
+        if os.path.exists(os.path.join(path, '.git')) or path == os.path.dirname(path):
+            return False
+        path = os.path.dirname(path)
